@@ -1,7 +1,12 @@
 const express = require("express");
-
+require("dotenv").config();
+const { connectToMongoDB } = require("./db");
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
+
+connectToMongoDB();
+
+app.use(express.urlencoded({ extended: false }));
 
 app.get("/", (req, res) => {
   res.send("Hello, World!");
