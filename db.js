@@ -1,19 +1,22 @@
-// db.js
-const mongoose = require("mongoose");
-require("dotenv").config();
+const { Sequelize, DataTypes } = require("sequelize");
+const sequelize = new Sequelize(process.env.MYSQL_URI);
 
-const CONNECTION_URL = process.env.MONGO_URI;
+const db = {};
 
-function connectToMongoDB() {
-  mongoose.connect(CONNECTION_URL);
+db.sequelize = sequelize;
+db.Sequelize = Sequelize;
 
-  mongoose.connection.on("connected", () => {
-    console.log("✅ Successfully connected to MongoDB");
-  });
+// Import models
+db.User = require("./User")(sequelize, DataTypes);
+db.Exercise = require("./Exercise")(sequelize, DataTypes);
+db.WorkoutPlan = require("./WorkoutPlan")(sequelize, DataTypes);
+db.WorkoutPlanExercise = require("./WorkoutPlanExercise")(sequelize, DataTypes);
+db.WorkoutLog = require("./WorkoutLog")(sequelize, DataTypes);
+db.WorkoutLogEntry = require("./WorkoutLogEntry")(sequelize, DataTypes);
 
-  mongoose.connection.on("error", (err) => {
-    console.error("❌ MongoDB connection error:", err);
-  });
-}
+// Setup associations
+Object.values(db).forEach((model) => {
+  if (model.associate) model.associate(db);
+});
 
-module.exports = { connectToMongoDB };
+module.exports = db;

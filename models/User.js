@@ -1,11 +1,14 @@
-// models/User.js
-const mongoose = require("mongoose");
+module.exports = (sequelize, DataTypes) => {
+  const User = sequelize.define("User", {
+    username: { type: DataTypes.STRING, allowNull: false, unique: true },
+    email: { type: DataTypes.STRING, allowNull: false, unique: true },
+    password: { type: DataTypes.STRING, allowNull: false },
+  });
 
-const UserSchema = new mongoose.Schema({
-  username: { type: String, required: true, unique: true },
-  email: { type: String, unique: true },
-  password: { type: String, required: true }, // hashed!
-  createdAt: { type: Date, default: Date.now },
-});
+  User.associate = (models) => {
+    User.hasMany(models.WorkoutPlan, { foreignKey: "userId" });
+    User.hasMany(models.WorkoutLog, { foreignKey: "userId" });
+  };
 
-module.exports = mongoose.model("User", UserSchema);
+  return User;
+};

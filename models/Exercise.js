@@ -1,23 +1,22 @@
-// models/Exercise.js
-const mongoose = require("mongoose");
-
-const ExerciseSchema = new mongoose.Schema({
-  workoutId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Workout",
-    required: true,
-  },
-  name: { type: String, required: true }, // e.g., Bench Press
-  muscleGroup: { type: String }, // e.g., Chest, optional
-  sets: [
-    {
-      reps: { type: Number },
-      weight: { type: Number }, // in kg or lbs
-      distance: { type: Number }, // for cardio, in meters/km
-      duration: { type: Number }, // for cardio, in seconds/minutes
-      notes: { type: String },
+module.exports = (sequelize, DataTypes) => {
+  const Exercise = sequelize.define("Exercise", {
+    name: { type: DataTypes.STRING, allowNull: false },
+    description: { type: DataTypes.TEXT },
+    category: {
+      type: DataTypes.ENUM("cardio", "strength", "flexibility"),
+      allowNull: false,
     },
-  ],
-});
+    muscleGroup: { type: DataTypes.STRING },
+  });
 
-module.exports = mongoose.model("Exercise", ExerciseSchema);
+  Exercise.associate = (models) => {
+    Exercise.belongsToMany(models.WorkoutPlan, {
+      through: models.WorkoutPlanExercise,
+      foreignKey: "exerciseId",
+    });
+
+    Exercise.hasMany(models.WorkoutLogEntry, { foreignKey: "exerciseId" });
+  };
+
+  return Exercise;
+};
