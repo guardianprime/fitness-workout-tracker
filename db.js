@@ -5,10 +5,7 @@ require("dotenv").config();
 const CONNECTION_URL = process.env.MONGO_URI;
 
 function connectToMongoDB() {
-  mongoose.connect(CONNECTION_URL, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  });
+  mongoose.connect(CONNECTION_URL);
 
   mongoose.connection.on("connected", () => {
     console.log("✅ Successfully connected to MongoDB");
