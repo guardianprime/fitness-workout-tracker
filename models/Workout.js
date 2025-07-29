@@ -1,10 +1,28 @@
-// models/Workout.js
-const mongoose = require("mongoose");
+const workoutModel = (sequelize, DataTypes) => {
+  const Workout = sequelize.define("Workout", {
+    userId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: "Users", // must match the table name or model name
+        key: "id",
+      },
+    },
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    date: {
+      type: DataTypes.DATE,
+      defaultValue: DataTypes.NOW,
+    },
+  });
 
-const WorkoutSchema = new mongoose.Schema({
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-  name: { type: String, required: true },
-  date: { type: Date, default: Date.now },
-}); 
+  Workout.associate = (models) => {
+    Workout.belongsTo(models.User, { foreignKey: "userId" });
+  };
 
-module.exports = mongoose.model("Workout", WorkoutSchema);
+  return Workout;
+};
+
+module.exports = workoutModel;
