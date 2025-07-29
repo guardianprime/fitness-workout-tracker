@@ -10,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
   });
 
   Exercise.associate = (models) => {
-    Exercise.belongsToMany(models.WorkoutPlan, {
+    Exercise.belongsToMany(models.Workout, {
       through: models.WorkoutPlanExercise,
       foreignKey: "exerciseId",
     });

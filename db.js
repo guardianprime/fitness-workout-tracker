@@ -1,5 +1,15 @@
 const { Sequelize, DataTypes } = require("sequelize");
-const sequelize = new Sequelize(process.env.MYSQL_URI);
+const sequelize = new Sequelize(
+  process.env.DB_NAME, // database
+  process.env.DB_USER, // username
+  process.env.DB_PASSWORD, // password
+  {
+    host: process.env.DB_HOST,
+    dialect: "mysql",
+    port: process.env.DB_PORT,
+    logging: false, // optional
+  }
+);
 
 const db = {};
 
@@ -7,12 +17,9 @@ db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
 // Import models
-db.User = require("./User")(sequelize, DataTypes);
-db.Exercise = require("./Exercise")(sequelize, DataTypes);
-db.WorkoutPlan = require("./WorkoutPlan")(sequelize, DataTypes);
-db.WorkoutPlanExercise = require("./WorkoutPlanExercise")(sequelize, DataTypes);
-db.WorkoutLog = require("./WorkoutLog")(sequelize, DataTypes);
-db.WorkoutLogEntry = require("./WorkoutLogEntry")(sequelize, DataTypes);
+db.User = require("./models/User")(sequelize, DataTypes);
+db.Exercise = require("./models/Exercise")(sequelize, DataTypes);
+db.Workout = require("./models/Workout")(sequelize, DataTypes);
 
 // Setup associations
 Object.values(db).forEach((model) => {
